@@ -6,7 +6,7 @@ import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 import "main-lib";
 declare const ScriptManager: {
   render: (el: HTMLElement, context: WebPartContext) => void;
-  updateTheme: (theme: IReadonlyTheme) => void;
+  updateTheme: (themeInfo: IReadonlyTheme) => void;
 };
 
 export interface IScriptManagerWebPartProps {

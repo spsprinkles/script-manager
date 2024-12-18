@@ -32,7 +32,8 @@ const GlobalVariable = {
             // Show the install dialog
             InstallDialog.show();
         });
-    }
+    },
+    updateTheme: (themeInfo) => { ThemeManager.update(themeInfo); }
 };
 
 // Make is available in the DOM
