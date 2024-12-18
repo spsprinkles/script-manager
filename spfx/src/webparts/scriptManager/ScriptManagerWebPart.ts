@@ -16,6 +16,9 @@ export interface IScriptManagerWebPartProps {
 export default class ScriptManagerWebPart extends BaseClientSideWebPart<IScriptManagerWebPartProps> {
 
   public render(): void {
+    // Clear the element
+    while (this.domElement.firstChild) { this.domElement.removeChild(this.domElement.firstChild); }
+
     // Render the application
     ScriptManager.render(this.domElement, this.context);
   }

@@ -3,26 +3,36 @@
   "id": "7d31badb-a0b3-4d08-9558-9c4d33f1878b",
   "alias": "ScriptManagerWebPart",
   "componentType": "WebPart",
-
   // The "*" signifies that the version should be taken from the package.json
   "version": "*",
   "manifestVersion": 2,
-
   // If true, the component can only be installed on sites where Custom Script is allowed.
   // Components that allow authors to embed arbitrary script code should set this to true.
   // https://support.office.com/en-us/article/Turn-scripting-capabilities-on-or-off-1f2c515f-5d7e-448a-9fd7-835da935584f
   "requiresCustomScript": false,
-  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
+  "supportedHosts": [
+    "SharePointWebPart",
+    "TeamsPersonalApp",
+    "TeamsTab",
+    "SharePointFullPage"
+  ],
   "supportsThemeVariants": true,
-
-  "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
-    "group": { "default": "Advanced" },
-    "title": { "default": "ScriptManager" },
-    "description": { "default": "ScriptManager description" },
-    "officeFabricIconFontName": "Page",
-    "properties": {
-      "description": "ScriptManager"
+  "preconfiguredEntries": [
+    {
+      "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
+      "group": {
+        "default": "Advanced"
+      },
+      "title": {
+        "default": "Script Manager"
+      },
+      "description": {
+        "default": "A tool to manage scripts run against SPO."
+      },
+      "officeFabricIconFontName": "Page",
+      "properties": {
+        "description": "A tool to manage scripts run against SPO."
+      }
     }
-  }]
+  ]
 }

@@ -1,9 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "script-manager-client-side-solution",
+    "name": "Script Manager",
     "id": "eaa5cab5-583a-416a-ac4e-fe0d57f746c6",
-    "version": "1.0.0.0",
+    "version": "0.0.0.1",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
