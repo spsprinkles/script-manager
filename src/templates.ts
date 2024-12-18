@@ -9,6 +9,16 @@ export class Templates {
         Parameters: 4
     }
 
+    // Item
+    private static Item = `Site Url,List Name,Item ID,Method,Parameters`;
+    static ItemColumns = {
+        SiteUrl: 0,
+        ListName: 1,
+        ItemID: 2,
+        Method: 3,
+        Parameters: 4
+    }
+
     // List
     private static List = `Site Url,List ID,List Name,Method,Parameters`;
     static ListColumns = {
@@ -28,7 +38,7 @@ export class Templates {
     }
 
     // Downloads the the template csv
-    static download(title: string, templateType: "file" | "list" | "site") {
+    static download(title: string, templateType: "file" | "item" | "list" | "site") {
         // Set the file name and template
         let filename = "";
         let template = "";
@@ -36,6 +46,10 @@ export class Templates {
             case "file":
                 filename = title + "_file.csv";
                 template = this.File;
+                break;
+            case "item":
+                filename = title + "_item.csv";
+                template = this.Item;
                 break;
             case "list":
                 filename = title + "_list.csv";

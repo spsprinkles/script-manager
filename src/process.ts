@@ -90,16 +90,25 @@ export class ProcessScript {
                 let data = row.split(',');
                 for (let i = 0; i < data.length; i++) { data[i] = data[i].trim(); }
 
+                // Adds the result to the array and resolve the request
+                let onProcessed = result => {
+                    results.push(result);
+                    resolve(null);
+                }
+
                 // Process based on the type
                 switch (this._item.ScriptType) {
                     case "File":
-                        this.processFile(data).then(result => { results.push(result); resolve(null); });
+                        this.processFile(data).then(onProcessed);
+                        break;
+                    case "Item":
+                        this.processItem(data).then(onProcessed);
                         break;
                     case "List":
-                        this.processList(data).then(result => { results.push(result); resolve(null); });
+                        this.processList(data).then(onProcessed);
                         break;
                     case "Site":
-                        this.processSite(data).then(result => { results.push(result); resolve(null); });
+                        this.processSite(data).then(onProcessed);
                         break;
                 }
             });
@@ -121,6 +130,39 @@ export class ProcessScript {
             }).then(file => {
                 // Execute the method
                 this.execute(file, row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+            }, err => {
+                // Resolve the request
+                resolve({
+                    Error: true,
+                    Message: "Error getting the file.",
+                    Output: err.response || err
+                });
+            });
+        });
+    }
+
+    // Process the item
+    private processItem(row: string[]): PromiseLike<IProcessResult> {
+        // Return a promise
+        return new Promise(resolve => {
+            // Get the file
+            v2.sites.getList({
+                listName: row[Templates.ItemColumns.ListName],
+                siteUrl: row[Templates.ItemColumns.SiteUrl]
+            }).then(list => {
+                let item = list.items(row[Templates.ItemColumns.ItemID]);
+
+                // Try to execute the method
+                try {
+                    this.execute(item, row[Templates.ItemColumns.Method] || this._item.Method, row[Templates.ItemColumns.Parameters] || this._item.Parameters).then(resolve);
+                } catch {
+                    // Resolve the request
+                    resolve({
+                        Error: true,
+                        Message: "Error executing the method.",
+                        Output: "The parameters are not in the correct format for this method."
+                    });
+                }
             }, err => {
                 // Resolve the request
                 resolve({
