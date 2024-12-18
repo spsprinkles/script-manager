@@ -41,31 +41,22 @@ export class ProcessScript {
             }
             catch { args = []; }
 
-            // Ensure the method exists
-            if (method) {
-                // Execute the method
-                obj[method](...args).execute(resp => {
-                    // Resolve the request
-                    resolve({
-                        Error: false,
-                        Message: "Method was executed successfully.",
-                        Output: resp.response
-                    });
-                }, err => {
-                    // Resolve the request
-                    resolve({
-                        Error: true,
-                        Message: "Error executing the method.",
-                        Output: err.response
-                    });
+            // Execute the method
+            (method ? obj[method](...args) : obj).execute(resp => {
+                // Resolve the request
+                resolve({
+                    Error: false,
+                    Message: "Method was executed successfully.",
+                    Output: resp.response
                 });
-            } else {
+            }, err => {
                 // Resolve the request
                 resolve({
                     Error: true,
-                    Message: "Unable to determine the method."
+                    Message: "Error executing the method.",
+                    Output: err.response
                 });
-            }
+            });
         });
     }
 

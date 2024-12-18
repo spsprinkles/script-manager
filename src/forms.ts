@@ -47,6 +47,11 @@ export class Forms {
                     return results;
                 }
             }
+
+            // See if this is the method field
+            if (fld.InternalName == "Method") {
+
+            }
         };
     }
 
