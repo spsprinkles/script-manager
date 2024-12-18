@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "script-manager-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/scriptManager/ScriptManagerWebPart.js",
+          "manifest": "./src/webparts/scriptManager/ScriptManagerWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {
+    "main-lib": {
+      "globalName": "main-lib",
+      "path": "../dist/script-manager.js"
+    }
+  },
+  "localizedResources": {
+    "ScriptManagerWebPartStrings": "lib/webparts/scriptManager/loc/{locale}.js"
+  }
+}

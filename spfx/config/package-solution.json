@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "script-manager-client-side-solution",
+    "id": "eaa5cab5-583a-416a-ac4e-fe0d57f746c6",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "script-manager description"
+      },
+      "longDescription": {
+        "default": "script-manager description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "script-manager Feature",
+        "description": "The feature that activates elements of the script-manager solution.",
+        "id": "1f177190-90f5-4303-8f8d-9cacedc93c7c",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "../../dist/script-manager.sppkg"
+  }
+}
