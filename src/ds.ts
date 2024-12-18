@@ -43,11 +43,16 @@ export class DataSource {
     }
 
     // Refreshes the list data
-    static refresh(): PromiseLike<IListItem[]> {
+    static refresh(itemId?: number): PromiseLike<IListItem | IListItem[]> {
         // Return a promise
         return new Promise((resolve, reject) => {
-            // Refresh the data
-            DataSource.List.refresh().then(resolve, reject);
+            // See if an item id was given
+            if (itemId) {
+                this.List.refreshItem(itemId).then(resolve, reject);
+            } else {
+                // Refresh the data
+                DataSource.List.refresh().then(resolve, reject);
+            }
         });
     }
 }

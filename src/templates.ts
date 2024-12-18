@@ -1,6 +1,6 @@
 export class Templates {
     // File
-    private static File = `"Site Url", "List Name", "File Url", "Method", "Parameters"`;
+    private static File = `Site Url,List Name,File Url,Method,Parameters`;
     static FileColumns = {
         SiteUrl: 0,
         ListName: 1,
@@ -10,7 +10,7 @@ export class Templates {
     }
 
     // List
-    private static List = `"Site Url", "List Id", "List Name", "Method", "Parameters"`;
+    private static List = `Site Url,List ID,List Name,Method,Parameters`;
     static ListColumns = {
         SiteUrl: 0,
         ListId: 1,
@@ -20,7 +20,7 @@ export class Templates {
     }
 
     // Site
-    private static Site = `"Site Url", "Method", "Parameters"`;
+    private static Site = `Site Url,Method,Parameters`;
     static SiteColumns = {
         SiteUrl: 0,
         Method: 1,
