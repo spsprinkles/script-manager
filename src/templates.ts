@@ -1,12 +1,31 @@
 export class Templates {
     // File
-    private static File = `"Site Url", "File Url", "Method", "Parameters"`;
+    private static File = `"Site Url", "List Name", "File Url", "Method", "Parameters"`;
+    static FileColumns = {
+        SiteUrl: 0,
+        ListName: 1,
+        FileUrl: 2,
+        Method: 3,
+        Parameters: 4
+    }
 
     // List
-    private static List = `"Site Url", "List Name", "Method", "Parameters"`;
+    private static List = `"Site Url", "List Id", "List Name", "Method", "Parameters"`;
+    static ListColumns = {
+        SiteUrl: 0,
+        ListId: 1,
+        ListName: 2,
+        Method: 3,
+        Parameters: 4
+    }
 
     // Site
     private static Site = `"Site Url", "Method", "Parameters"`;
+    static SiteColumns = {
+        SiteUrl: 0,
+        Method: 1,
+        Parameters: 2
+    }
 
     // Downloads the the template csv
     static download(title: string, templateType: "file" | "list" | "site") {
