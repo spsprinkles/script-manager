@@ -1,5 +1,5 @@
 import { DataTable, LoadingDialog, Modal } from "dattatable";
-import { Components, Helper, Web } from "gd-sprest-bs";
+import { Components, Helper, Types, Web } from "gd-sprest-bs";
 import { fileExcel } from "gd-sprest-bs/build/icons/svgs/fileExcel";
 import { xSquare } from "gd-sprest-bs/build/icons/svgs/xSquare";
 import { DataSource, IListItem } from "./ds";
@@ -12,14 +12,9 @@ export class Forms {
     static create(onCreated: () => void) {
         // Show the create form
         DataSource.List.newForm({
-            onGetListInfo: props => {
-                // Load attachments
-                props.loadAttachments = true;
-                return props;
-            },
             onCreateEditForm: props => {
-                // Show the attachments
-                props.displayAttachments = true;
+                // Customize the form
+                props.onControlRendering = this.customizeForm();
                 return props;
             },
             onUpdate: () => {
@@ -32,19 +27,37 @@ export class Forms {
         });
     }
 
+    // Customizes the form
+    private static customizeForm(): (control: Components.IFormControlProps, field: Types.SP.Field) => void {
+        return (ctrl, fld) => {
+            // See if it's the parameters field
+            if (fld.InternalName == "Parameters") {
+                // Add validation
+                ctrl.onValidate = (ctrl, results) => {
+                    // See if there is a value
+                    if (ctrl.value) {
+                        // Ensure it's in JSON format
+                        try { JSON.parse(results.value); }
+                        catch {
+                            results.isValid = false;
+                            results.invalidMessage = "The parameters need to be in JSON format.";
+                        }
+                    }
+
+                    return results;
+                }
+            }
+        };
+    }
+
     // Edit form
     static edit(itemId: number, onUpdated: () => void) {
         // Show the create form
         DataSource.List.editForm({
             itemId,
-            onGetListInfo: props => {
-                // Load attachments
-                props.loadAttachments = true;
-                return props;
-            },
             onCreateEditForm: props => {
-                // Show the attachments
-                props.displayAttachments = true;
+                // Customize the form
+                props.onControlRendering = this.customizeForm();
                 return props;
             },
             onUpdate: () => {
