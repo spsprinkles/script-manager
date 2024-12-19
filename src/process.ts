@@ -25,6 +25,12 @@ export class ProcessScript {
         // Remove the first row
         this._rows.splice(0, 1);
 
+        // See if the last row is empty
+        if (this._rows[this._rows.length - 1] == "") {
+            // Remove the last row
+            this._rows.splice(this._rows.length - 1, 1);
+        }
+
         // Process the rows
         this.process();
     }

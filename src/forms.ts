@@ -6,6 +6,7 @@ import { DataSource, IListItem } from "./ds";
 import { ExportCSV } from "./exportCSV";
 import { ProcessScript, IProcessResult } from "./process";
 import Strings from "./strings";
+import { Templates } from "./templates";
 
 export class Forms {
     // Create form
@@ -27,9 +28,71 @@ export class Forms {
         });
     }
 
+    // The methods field popover
+    private static _items: Components.IDropdownItem[] = null;
+    private static setItems(item: Components.IDropdownItem) {
+        // Set the items, based on the value
+        switch (item?.text) {
+            case "File":
+                this._items = Templates.FileMethods;
+                break;
+            case "Item":
+                this._items = Templates.ItemMethods;
+                break;
+            case "List":
+                this._items = Templates.ListMethods;
+                break;
+            case "Site":
+                this._items = Templates.SiteMethods;
+                break;
+            default:
+                this._items = [];
+                break;
+        }
+
+        // Update the popover
+        this._popover.setBody(Components.Dropdown({
+            menuOnly: true,
+            items: this._items,
+            onChange: (item: Components.IDropdownItem) => {
+                // Ensure an item was selected
+                if (item) {
+                    // Set the value
+                    DataSource.List.EditForm.getControl("Method").setValue(item.text);
+                }
+
+                // Hide the popover
+                this._popover.hide();
+            }
+        }).el);
+    }
+
     // Customizes the form
+    private static _popover: Components.IPopover = null;
     private static customizeForm(): (control: Components.IFormControlProps, field: Types.SP.Field) => void {
         return (ctrl, fld) => {
+            // See if this is the method field
+            if (fld.InternalName == "Method") {
+                // Add a rendered event
+                ctrl.onControlRendered = (ctrl) => {
+                    // Add a popover
+                    this._popover = Components.Popover({
+                        target: ctrl.textbox.elTextbox,
+                        placement: Components.PopoverPlacements.BottomStart,
+                        options: {
+                            trigger: "click"
+                        }
+                    });
+
+                    // Set the items if a value exists
+                    let item: IListItem = DataSource.List.EditForm.getItem();
+                    if (item?.ScriptType) {
+                        // Set the items
+                        this.setItems({ text: item.ScriptType });
+                    }
+                }
+            }
+
             // See if it's the parameters field
             if (fld.InternalName == "Parameters") {
                 // Add validation
@@ -48,9 +111,13 @@ export class Forms {
                 }
             }
 
-            // See if this is the method field
-            if (fld.InternalName == "Method") {
-
+            // See if this is the script type
+            if (fld.InternalName == "ScriptType") {
+                // Add a change event
+                (ctrl as Components.IFormControlPropsDropdown).onChange = (item) => {
+                    // Set the items
+                    this.setItems(item);
+                }
             }
         };
     }
