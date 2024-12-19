@@ -36,6 +36,7 @@ export class Forms {
             case "File":
                 this._items = Templates.FileMethods;
                 break;
+            case "File Item":
             case "Item":
                 this._items = Templates.ItemMethods;
                 break;

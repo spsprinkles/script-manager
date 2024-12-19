@@ -96,7 +96,10 @@ export class ProcessScript {
                 // Process based on the type
                 switch (this._item.ScriptType) {
                     case "File":
-                        this.processFile(data).then(onProcessed);
+                        this.processFile(data, false).then(onProcessed);
+                        break;
+                    case "File Item":
+                        this.processFile(data, true).then(onProcessed);
                         break;
                     case "Item":
                         this.processItem(data).then(onProcessed);
@@ -116,7 +119,7 @@ export class ProcessScript {
     }
 
     // Process the file
-    private processFile(row: string[]): PromiseLike<IProcessResult> {
+    private processFile(row: string[], itemFl: boolean): PromiseLike<IProcessResult> {
         // Return a promise
         return new Promise(resolve => {
             // Get the file
@@ -125,8 +128,14 @@ export class ProcessScript {
                 listName: row[Templates.FileColumns.ListName],
                 siteUrl: row[Templates.FileColumns.SiteUrl]
             }).then(file => {
-                // Execute the method
-                this.execute(file, row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+                // See if we are applying it to the item
+                if (itemFl) {
+                    // Execute the method
+                    this.execute(file.listItem(), row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+                } else {
+                    // Execute the method
+                    this.execute(file, row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+                }
             }, err => {
                 // Resolve the request
                 resolve({

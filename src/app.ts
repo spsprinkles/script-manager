@@ -51,6 +51,10 @@ export class App {
                                 onClick: () => { Templates.download("template", "file"); }
                             },
                             {
+                                text: "Item",
+                                onClick: () => { Templates.download("template", "item"); }
+                            },
+                            {
                                 text: "List",
                                 onClick: () => { Templates.download("template", "list"); }
                             },

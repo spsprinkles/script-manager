@@ -40,7 +40,7 @@ export const Configuration = Helper.SPConfig({
                     defaultValue: "File",
                     required: true,
                     choices: [
-                        "File", "Item", "List", "Site"
+                        "File", "File Item", "Item", "List", "Site"
                     ]
                 } as Helper.IFieldInfoChoice
             ],
