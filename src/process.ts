@@ -53,14 +53,14 @@ export class ProcessScript {
                 resolve({
                     Error: false,
                     Message: "Method was executed successfully.",
-                    Output: resp.response
+                    Output: resp?.response
                 });
             }, err => {
                 // Resolve the request
                 resolve({
                     Error: true,
                     Message: "Error executing the method.",
-                    Output: err.response
+                    Output: err?.response
                 });
             });
         });
