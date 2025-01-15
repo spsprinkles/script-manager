@@ -1,6 +1,6 @@
 import { DataTable, LoadingDialog, Modal } from "dattatable";
-import { MapperV2 } from "../node_modules/.pnpm/gd-sprest@8.8.0/node_modules/gd-sprest/build/mapper";
 import { Components, Types } from "gd-sprest-bs";
+import { MapperV2 } from "gd-sprest-bs/../gd-sprest/build/mapper";
 import { fileExcel } from "gd-sprest-bs/build/icons/svgs/fileExcel";
 import { xSquare } from "gd-sprest-bs/build/icons/svgs/xSquare";
 import { DataSource, IListItem } from "./ds";
