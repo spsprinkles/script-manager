@@ -37,7 +37,7 @@ export const Configuration = Helper.SPConfig({
                     name: "ScriptType",
                     title: "Script Type",
                     type: Helper.SPCfgFieldType.Choice,
-                    defaultValue: "File",
+                    defaultValue: "",
                     required: true,
                     choices: [
                         "File", "File Item", "Item", "List", "Site"

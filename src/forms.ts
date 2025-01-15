@@ -1,4 +1,5 @@
 import { DataTable, LoadingDialog, Modal } from "dattatable";
+import { MapperV2 } from "gd-sprest/build/mapper";
 import { Components, Helper, Types, Web } from "gd-sprest-bs";
 import { fileExcel } from "gd-sprest-bs/build/icons/svgs/fileExcel";
 import { xSquare } from "gd-sprest-bs/build/icons/svgs/xSquare";
@@ -30,25 +31,54 @@ export class Forms {
 
     // The methods field popover
     private static _items: Components.IDropdownItem[] = null;
+    private static _selectedType: string = null;
     private static setItems(item: Components.IDropdownItem) {
         // Set the items, based on the value
         switch (item?.text) {
             case "File":
-                this._items = Templates.FileMethods;
+                this._selectedType = "driveItem";
                 break;
             case "File Item":
             case "Item":
-                this._items = Templates.ItemMethods;
+                this._selectedType = "listItem";
                 break;
             case "List":
-                this._items = Templates.ListMethods;
+                this._selectedType = "list";
                 break;
             case "Site":
-                this._items = Templates.SiteMethods;
+                this._selectedType = "site";
                 break;
             default:
-                this._items = [];
+                this._selectedType = "";
                 break;
+        }
+
+        // Clear the items
+        this._items = [{ text: "" }];
+
+        // Get the library methods
+        let lib = MapperV2[this._selectedType];
+        if (lib) {
+            // Parse the methods
+            for (let methodName in lib) {
+                let methodInfo = lib[methodName];
+
+                // See if this is a method
+                if (methodName != "properties") {
+                    // See if arg names exist
+                    this._items.push({
+                        data: methodInfo,
+                        text: methodName
+                    });
+                }
+            }
+
+            // Sort the items
+            this._items = this._items.sort((a, b) => {
+                if (a.text > b.text) { return 1; }
+                if (a.text < b.text) { return -1; }
+                return 0;
+            });
         }
 
         // Update the popover
@@ -60,6 +90,16 @@ export class Forms {
                 if (item) {
                     // Set the value
                     DataSource.List.EditForm.getControl("Method").setValue(item.text);
+                }
+
+                // See if there are any arguments
+                let ctrlParms = DataSource.List.EditForm.getControl("Parameters");
+                if (item.data?.argNames) {
+                    // Set the params
+                    ctrlParms.setValue(`(${item.data.argNames.join(', ')})`);
+                } else {
+                    // Clear the params
+                    ctrlParms.setValue("");
                 }
 
                 // Hide the popover
@@ -74,6 +114,15 @@ export class Forms {
         return (ctrl, fld) => {
             // See if this is the method field
             if (fld.InternalName == "Method") {
+                // Add a change event
+                (ctrl as Components.IFormControlPropsDropdown).onChange = (item) => {
+                    // Ensure an item is selected
+                    if (item == null) { return; }
+
+                    // Get the method params
+                    this.getMethodParams(item.text);
+                }
+
                 // Add a rendered event
                 ctrl.onControlRendered = (ctrl) => {
                     // Add a popover
@@ -114,6 +163,9 @@ export class Forms {
 
             // See if this is the script type
             if (fld.InternalName == "ScriptType") {
+                // Clear the value
+                ctrl.value = "";
+
                 // Add a change event
                 (ctrl as Components.IFormControlPropsDropdown).onChange = (item) => {
                     // Set the items
@@ -143,99 +195,9 @@ export class Forms {
         });
     }
 
-    // Process form
-    static process(item: IListItem): PromiseLike<IProcessResult[]> {
-        // Show a loading dialog
-        LoadingDialog.setHeader("Loading CSV");
-        LoadingDialog.setBody("Loading the csv for this item.");
-        LoadingDialog.show();
-
-        // Return a promise
-        return new Promise((resolve, reject) => {
-            // Get the attachment files
-            item.AttachmentFiles().execute(files => {
-                // Ensure the file exists
-                if (files.results[0]) {
-                    // Read the file
-                    this.readFile(document.location.origin + files.results[0].ServerRelativeUrl).then(csv => {
-                        // Hide the dialog
-                        LoadingDialog.hide();
-
-                        // Process the rows
-                        new ProcessScript(item, csv.split('\n'), (results) => {
-                            // Show the results
-                            this.renderSummary(item, results);
-
-                            // Hide the loading dialog
-                            LoadingDialog.hide();
-                        });
-                    }, () => {
-                        // Clear the modal
-                        Modal.clear();
-
-                        // Set the header
-                        Modal.setHeader("Load Error");
-
-                        // Set the body
-                        Modal.setBody("There was an error loading the csv file.");
-
-                        // Show the modal
-                        Modal.show();
-
-                        // Hide the loading dialog and reject the request
-                        LoadingDialog.hide();
-                        reject();
-                    });
-                } else {
-                    // Clear the modal
-                    Modal.clear();
-
-                    // Set the header
-                    Modal.setHeader("Load Error");
-
-                    // Set the body
-                    Modal.setBody("There is no csv file associated with this item. Please upload a csv file first.");
-
-                    // Show the modal
-                    Modal.show();
-
-                    // Hide the loading dialog and reject the request
-                    LoadingDialog.hide();
-                    reject();
-                }
-
-            });
-        });
-    }
-
-    // Reads the file attachment and returns a string
-    private static readFile(url: string): PromiseLike<string> {
-        // Return a promise
-        return new Promise((resolve, reject) => {
-            // Read the file
-            Web(Strings.SourceUrl).getFileByUrl(url).execute(file => {
-                // Read the content
-                file.content().execute(data => {
-                    // Resolve the request
-                    resolve(String.fromCharCode.apply(null, new Uint8Array(data)));
-                });
-            }, () => {
-                // Clear the modal
-                Modal.clear();
-
-                // Set the header
-                Modal.setHeader("Load Error");
-
-                // Set the body
-                Modal.setBody("There was an error loading the csv file.");
-
-                // Show the modal
-                Modal.show();
-
-                // Reject the request
-                reject();
-            });
-        });
+    // Get the method params
+    private static getMethodParams(methodName: string) {
+        // Get the lib
     }
 
     // Renders the summary dialog
@@ -320,8 +282,8 @@ export class Forms {
         Modal.show();
     }
 
-    // Update form
-    static update(item: IListItem) {
+    // Shows the upload form
+    static upload(item: IListItem) {
         // Clear the modal
         Modal.clear();
 
@@ -361,41 +323,20 @@ export class Forms {
                 if (form.isValid()) {
                     // Show a loading dialog
                     LoadingDialog.setHeader("Uploading CSV");
-                    LoadingDialog.setBody("Removing the previous file...");
+                    LoadingDialog.setBody("Reading the csv file...");
                     LoadingDialog.show();
 
-                    // Load the current attachments
-                    item.AttachmentFiles().execute(files => {
-                        // Parse the current files
-                        Helper.Executor(files.results, file => {
-                            // Delete the file
-                            return file.delete().execute();
-                        }).then(() => {
-                            // Update the dialog
-                            LoadingDialog.setBody("Uploading the new file...");
+                    // Read the file
+                    let fileInfo = form.getValues()["CSVFile"];
+                    let csv = String.fromCharCode.apply(null, new Uint8Array(fileInfo.data));
 
-                            // Upload the file
-                            let fileInfo = form.getValues()["CSVFile"];
-                            item.AttachmentFiles().add(fileInfo.name, fileInfo.data).execute(
-                                () => {
-                                    // Refresh the item
-                                    DataSource.refresh(item.Id).then(() => {
-                                        // Close the loading dialogs
-                                        LoadingDialog.hide();
-                                        Modal.hide();
-                                    });
-                                },
-                                () => {
-                                    // Update the body
-                                    Modal.clear();
-                                    Modal.setHeader("File Upload Failed");
-                                    Modal.setBody("The file failed to upload. Please refresh the page and try again.");
+                    // Process the rows
+                    new ProcessScript(item, csv.split('\n'), (results) => {
+                        // Show the results
+                        this.renderSummary(item, results);
 
-                                    // Hide the dialog
-                                    LoadingDialog.hide();
-                                }
-                            );
-                        });
+                        // Hide the loading dialog
+                        LoadingDialog.hide();
                     });
                 }
             }

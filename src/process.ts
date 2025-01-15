@@ -218,10 +218,10 @@ export class ProcessScript {
         // Return a promise
         return new Promise(resolve => {
             // Get the list
-            var site = v2.sites.getSite(row[Templates.SiteColumns.SiteUrl]);
-
-            // Execute the method
-            this.execute(site, row[Templates.SiteColumns.Method] || this._item.Method, row[Templates.SiteColumns.Parameters] || this._item.Parameters).then(resolve);
+            v2.sites.getSite(row[Templates.SiteColumns.SiteUrl]).then(site => {
+                // Execute the method
+                this.execute(site, row[Templates.SiteColumns.Method] || this._item.Method, row[Templates.SiteColumns.Parameters] || this._item.Parameters).then(resolve);
+            });
         });
     }
 }

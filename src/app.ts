@@ -1,5 +1,6 @@
 import { Dashboard } from "dattatable";
 import { Components } from "gd-sprest-bs";
+import { M365 } from "gd-sprest-bs/build/icons/custom/m365";
 import { DataSource, IListItem } from "./ds";
 import { Forms } from "./forms";
 import { InstallDialog } from "./install";
@@ -24,6 +25,7 @@ export class App {
             hideHeader: true,
             useModal: true,
             navigation: {
+                iconType: M365,
                 title: Strings.ProjectName,
                 showFilter: false,
                 items: [
@@ -142,24 +144,13 @@ export class App {
                                         }
                                     },
                                     {
-                                        content: "Uploads a new csv file to process.",
-                                        btnProps: {
-                                            text: "Upload CSV",
-                                            type: Components.ButtonTypes.OutlinePrimary,
-                                            onClick: () => {
-                                                // Show the update form
-                                                Forms.update(item);
-                                            }
-                                        }
-                                    },
-                                    {
-                                        content: "Processes the csv file.",
+                                        content: "Processes a csv file.",
                                         btnProps: {
                                             text: "Process",
                                             type: Components.ButtonTypes.OutlinePrimary,
                                             onClick: () => {
                                                 // Show the process form
-                                                Forms.process(item);
+                                                Forms.upload(item);
                                             }
                                         }
                                     }

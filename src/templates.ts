@@ -1,5 +1,3 @@
-import { Components } from "gd-sprest-bs";
-
 export class Templates {
     // File
     private static File = `Site Url,List Name,File Url,Method,Parameters`;
@@ -10,18 +8,6 @@ export class Templates {
         Method: 3,
         Parameters: 4
     }
-    static FileMethods: Components.IDropdownItem[] = [
-        { text: "analytics" },
-        { text: "children" },
-        { text: "listItem" },
-        { text: "permissions" },
-        { text: "query" },
-        { text: "retentionLabel" },
-        { text: "subscriptions" },
-        { text: "thumbnails" },
-        { text: "versions" },
-        { text: "workbook" }
-    ];
 
     // Item
     private static Item = `Site Url,List Name,Item ID,Method,Parameters`;
@@ -32,17 +18,6 @@ export class Templates {
         Method: 3,
         Parameters: 4
     }
-    static ItemMethods: Components.IDropdownItem[] = [
-        { text: "analytics" },
-        { text: "documentSetVersions" },
-        { text: "driveItem" },
-        { text: "extractSensitivityLabel" },
-        { text: "fields" },
-        { text: "query" },
-        { text: "setSensitivityLabel" },
-        { text: "update" },
-        { text: "versions" }
-    ];
 
     // List
     private static List = `Site Url,List ID,List Name,Method,Parameters`;
@@ -53,16 +28,6 @@ export class Templates {
         Method: 3,
         Parameters: 4
     }
-    static ListMethods: Components.IDropdownItem[] = [
-        { text: "columns" },
-        { text: "contentTypes" },
-        { text: "drive" },
-        { text: "items" },
-        { text: "operations" },
-        { text: "query" },
-        { text: "subscriptions" },
-        { text: "update" }
-    ];
 
     // Site
     private static Site = `Site Url,Method,Parameters`;
@@ -71,27 +36,6 @@ export class Templates {
         Method: 1,
         Parameters: 2
     }
-    static SiteMethods: Components.IDropdownItem[] = [
-        { text: "analytics" },
-        { text: "columns" },
-        { text: "contentTypes" },
-        { text: "drive" },
-        { text: "drives" },
-        { text: "externalColumns" },
-        { text: "items" },
-        { text: "lists" },
-        { text: "onenote" },
-        { text: "operations" },
-        { text: "pages" },
-        { text: "permissions" },
-        { text: "query" },
-        { text: "setSensitivityLabel" },
-        { text: "sites" },
-        { text: "termStore" },
-        { text: "termStores" },
-        { text: "update" },
-        { text: "versions" }
-    ];
 
     // Downloads the the template csv
     static download(title: string, templateType: "file" | "item" | "list" | "site") {
