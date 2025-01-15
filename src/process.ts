@@ -1,5 +1,5 @@
 import { LoadingDialog } from "dattatable";
-import { Helper, v2 } from "gd-sprest-bs";
+import { Helper, v2, Web } from "gd-sprest-bs";
 import { IListItem } from "./ds";
 import { Templates } from "./templates";
 
@@ -194,22 +194,83 @@ export class ProcessScript {
     private processList(row: string[]): PromiseLike<IProcessResult> {
         // Return a promise
         return new Promise(resolve => {
-            // Get the list
-            v2.sites.getList({
-                listId: row[Templates.ListColumns.ListId],
-                listName: row[Templates.ListColumns.ListName],
-                siteUrl: row[Templates.ListColumns.SiteUrl]
-            }).then(list => {
-                // Execute the method
-                this.execute(list, row[Templates.ListColumns.Method] || this._item.Method, row[Templates.ListColumns.Parameters] || this._item.Parameters).then(resolve);
-            }, err => {
-                // Resolve the request
-                resolve({
-                    Error: true,
-                    Message: "Error getting the list.",
-                    Output: err.response || err
+            // See if this is the clear method
+            let method = row[Templates.ListColumns.Method] || this._item.Method;
+            if (method == "clear") {
+                var list = Web(row[Templates.ListColumns.SiteUrl]).Lists(row[Templates.ListColumns.ListName]);
+
+                // Get the items
+                list.Items().query({
+                    GetAllItems: true,
+                    Select: ["id"],
+                    Top: 5000
+                }).execute(items => {
+                    // Delete the items
+                    for (let i = 0; i < items.results.length; i++) {
+                        // Delete the item
+                        list.Items(items.results[i].Id).delete().batch();
+                    }
+
+                    // Execute the batch job
+                    list.execute(resp => {
+                        // Resolve the request
+                        resolve({
+                            Error: false,
+                            Message: "The list has been cleared.",
+                            Output: resp["response"]
+                        });
+                    });
                 });
-            });
+            } else {
+                // Get the list
+                v2.sites.getList({
+                    listId: row[Templates.ListColumns.ListId],
+                    listName: row[Templates.ListColumns.ListName],
+                    siteUrl: row[Templates.ListColumns.SiteUrl]
+                }).then(list => {
+                    /* Comment out until we confirm that batch is available in v2 REST
+                    let method = row[Templates.ListColumns.Method] || this._item.Method;
+
+                    // See if this is the clear method
+                    if (method == "clear") {
+                        // Get the items
+                        list.items().query({
+                            GetAllItems: true,
+                            Select: ["id"],
+                            Top: 5000
+                        }).execute(items => {
+                            // Delete the items
+                            for (let i = 0; i < items.results.length; i++) {
+                                // Delete the item
+                                list.Items(items.results[i].id).delete().batch();
+                            }
+
+                            // Execute the batch job
+                            list.execute(resp => {
+                                // Resolve the request
+                                resolve({
+                                    Error: false,
+                                    Message: "The list has been cleared.",
+                                    Output: resp["response"]
+                                });
+                            });
+                        });
+                    } else {
+                        // Execute the method
+                        this.execute(list, method, row[Templates.ListColumns.Parameters] || this._item.Parameters).then(resolve);
+                    }
+                    */
+                    // Execute the method
+                    this.execute(list, method, row[Templates.ListColumns.Parameters] || this._item.Parameters).then(resolve);
+                }, err => {
+                    // Resolve the request
+                    resolve({
+                        Error: true,
+                        Message: "Error getting the list.",
+                        Output: err.response || err
+                    });
+                });
+            }
         });
     }
 

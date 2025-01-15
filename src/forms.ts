@@ -1,13 +1,11 @@
 import { DataTable, LoadingDialog, Modal } from "dattatable";
-import { MapperV2 } from "gd-sprest/build/mapper";
-import { Components, Helper, Types, Web } from "gd-sprest-bs";
+import { MapperV2 } from "../node_modules/.pnpm/gd-sprest@8.8.0/node_modules/gd-sprest/build/mapper";
+import { Components, Types } from "gd-sprest-bs";
 import { fileExcel } from "gd-sprest-bs/build/icons/svgs/fileExcel";
 import { xSquare } from "gd-sprest-bs/build/icons/svgs/xSquare";
 import { DataSource, IListItem } from "./ds";
 import { ExportCSV } from "./exportCSV";
 import { ProcessScript, IProcessResult } from "./process";
-import Strings from "./strings";
-import { Templates } from "./templates";
 
 export class Forms {
     // Create form
@@ -73,6 +71,12 @@ export class Forms {
                 }
             }
 
+            // See if this is the list type
+            if (this._selectedType == "list") {
+                // Add a clear method
+                this._items.push({ text: "clear" });
+            }
+
             // Sort the items
             this._items = this._items.sort((a, b) => {
                 if (a.text > b.text) { return 1; }
@@ -96,7 +100,7 @@ export class Forms {
                 let ctrlParms = DataSource.List.EditForm.getControl("Parameters");
                 if (item.data?.argNames) {
                     // Set the params
-                    ctrlParms.setValue(`(${item.data.argNames.join(', ')})`);
+                    ctrlParms.setValue(`[${item.data.argNames.join(', ')}]`);
                 } else {
                     // Clear the params
                     ctrlParms.setValue("");

@@ -3,7 +3,7 @@
   "solution": {
     "name": "Script Manager",
     "id": "eaa5cab5-583a-416a-ac4e-fe0d57f746c6",
-    "version": "0.0.0.3",
+    "version": "0.0.0.4",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
