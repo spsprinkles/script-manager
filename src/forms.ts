@@ -131,6 +131,7 @@ export class Forms {
                 ctrl.onControlRendered = (ctrl) => {
                     // Add a popover
                     this._popover = Components.Popover({
+                        classNameBody: "graph-methods",
                         target: ctrl.textbox.elTextbox,
                         placement: Components.PopoverPlacements.BottomStart,
                         options: {

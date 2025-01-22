@@ -1,1 +1,5 @@
-/** Custom Styles Go Here */
+/** Ensure the methods doesn't span past the viewable height */
+.graph-methods {
+    max-height: 100vh;
+    overflow-y: auto;
+}
