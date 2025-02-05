@@ -151,7 +151,7 @@ export class ProcessScript {
                 resolve({
                     Error: true,
                     Message: "Error getting the file.",
-                    Output: err.response || err
+                    Output: err?.response || err
                 });
             });
         });
