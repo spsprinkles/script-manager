@@ -149,7 +149,7 @@ export class App {
                                             text: "Process",
                                             type: Components.ButtonTypes.OutlinePrimary,
                                             onClick: () => {
-                                                // Show the process form
+                                                // Show the upload csv form to process the request
                                                 Forms.upload(item);
                                             }
                                         }

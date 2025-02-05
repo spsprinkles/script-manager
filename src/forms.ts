@@ -331,9 +331,15 @@ export class Forms {
                     LoadingDialog.setBody("Reading the csv file...");
                     LoadingDialog.show();
 
-                    // Read the file
+                    // Read the file in chunks to handle larger files
+                    // Otherwise, you will get a memory error
                     let fileInfo = form.getValues()["CSVFile"];
-                    let csv = String.fromCharCode.apply(null, new Uint8Array(fileInfo.data));
+                    let fileData = new Uint8Array(fileInfo.data);
+                    let chunkSize = 10000;
+                    let csv = "";
+                    for (let i = 0; i < fileData.length; i += chunkSize) {
+                        csv += String.fromCharCode.apply(null, fileData.slice(i, i + chunkSize));
+                    }
 
                     // Process the rows
                     new ProcessScript(item, csv.split('\n'), (results) => {
