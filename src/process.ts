@@ -1,4 +1,3 @@
-import { LoadingDialog } from "dattatable";
 import { Helper, v2, Web } from "gd-sprest-bs";
 import { IListItem } from "./ds";
 import { Templates } from "./templates";
@@ -14,12 +13,12 @@ export interface IProcessResult {
  */
 export class ProcessScript {
     private _item: IListItem = null;
-    private _onCompleted: (results: IProcessResult[]) => void;
+    private _onProcessedItem: (results: IProcessResult) => void;
     private _rows: string[] = null;
 
-    constructor(item: IListItem, rows: string[], onCompleted: (results: IProcessResult[]) => void) {
+    constructor(item: IListItem, rows: string[], onProcessedItem: (result: IProcessResult) => void) {
         this._item = item;
-        this._onCompleted = onCompleted;
+        this._onProcessedItem = onProcessedItem;
         this._rows = rows;
 
         // Remove the first row
@@ -78,53 +77,43 @@ export class ProcessScript {
 
     // Processes the rows
     private process() {
-        let results: IProcessResult[] = [];
-
-        // Show a loading dialog
-        LoadingDialog.setHeader("Processing " + this._item.Title + " Script");
-        LoadingDialog.setBody("Running the script...");
-        LoadingDialog.show();
-
         // Process the rows
         let counter = 0;
         Helper.Executor(this._rows, row => {
             // Return a promise
             return new Promise(resolve => {
-                // Update the loading dialog
-                LoadingDialog.setBody(`Processing ${++counter} of ${this._rows.length}`);
+                // Set the complete method
+                let onComplete = (item => {
+                    // Call the event
+                    this._onProcessedItem(item);
+
+                    // Check the next item
+                    resolve(item);
+                });
 
                 // Get the row data
                 let data = row.split(',');
                 for (let i = 0; i < data.length; i++) { data[i] = data[i].trim(); }
 
-                // Adds the result to the array and resolve the request
-                let onProcessed = result => {
-                    results.push(result);
-                    resolve(null);
-                }
-
                 // Process based on the type
                 switch (this._item.ScriptType) {
                     case "File":
-                        this.processFile(data, false).then(onProcessed);
+                        this.processFile(data, false).then(onComplete);
                         break;
                     case "File Item":
-                        this.processFile(data, true).then(onProcessed);
+                        this.processFile(data, true).then(onComplete);
                         break;
                     case "Item":
-                        this.processItem(data).then(onProcessed);
+                        this.processItem(data).then(onComplete);
                         break;
                     case "List":
-                        this.processList(data).then(onProcessed);
+                        this.processList(data).then(onComplete);
                         break;
                     case "Site":
-                        this.processSite(data).then(onProcessed);
+                        this.processSite(data).then(onComplete);
                         break;
                 }
             });
-        }).then(() => {
-            // Call the event
-            this._onCompleted(results);
         });
     }
 

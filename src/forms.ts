@@ -206,7 +206,9 @@ export class Forms {
     }
 
     // Renders the summary dialog
-    private static renderSummary(item: IListItem, results: IProcessResult[]) {
+    private static _table: DataTable = null;
+    private static _results: IProcessResult[] = null;
+    private static renderSummary(item: IListItem) {
         // Clear the modal
         Modal.clear();
 
@@ -217,12 +219,12 @@ export class Forms {
         Modal.setAutoClose(false);
 
         // Show the modal dialog
-        Modal.setHeader(item.Title + " Results");
+        Modal.setHeader("Processing Requests");
 
         // Render the table
-        new DataTable({
+        this._table = new DataTable({
             el: Modal.BodyElement,
-            rows: results,
+            rows: [],
             columns: [
                 {
                     name: "Error",
@@ -261,7 +263,7 @@ export class Forms {
                         type: Components.ButtonTypes.OutlineSuccess,
                         onClick: () => {
                             // Export the CSV
-                            new ExportCSV(item.Title + "_results.csv", ["Error", "Message", "Output"], results);
+                            new ExportCSV(item.Title + "_results.csv", ["Error", "Message", "Output"], this._items);
                         }
                     }
                 },
@@ -326,11 +328,6 @@ export class Forms {
             onClick: () => {
                 // Ensure the form is valid
                 if (form.isValid()) {
-                    // Show a loading dialog
-                    LoadingDialog.setHeader("Uploading CSV");
-                    LoadingDialog.setBody("Reading the csv file...");
-                    LoadingDialog.show();
-
                     // Read the file in chunks to handle larger files
                     // Otherwise, you will get a memory error
                     let fileInfo = form.getValues()["CSVFile"];
@@ -341,13 +338,27 @@ export class Forms {
                         csv += String.fromCharCode.apply(null, fileData.slice(i, i + chunkSize));
                     }
 
-                    // Process the rows
-                    new ProcessScript(item, csv.split('\n'), (results) => {
-                        // Show the results
-                        this.renderSummary(item, results);
+                    // Clear the results
+                    this._results = [];
 
-                        // Hide the loading dialog
-                        LoadingDialog.hide();
+                    // Render the summary table
+                    this.renderSummary(item);
+
+                    // Process the rows
+                    let rows = csv.split('\n');
+                    new ProcessScript(item, rows, (result) => {
+                        // Append the result
+                        this._results.push(result);
+
+                        // Refresh the table
+                        this._table.refresh(this._results);
+
+                        // Update the header
+                        if (rows.length == this._results.length) {
+                            Modal.setHeader(`${item.Title} Results: ${rows.length} Completed`);
+                        } else {
+                            Modal.setHeader(`Processed (${this._results.length} of ${rows.length}) Requests`);
+                        }
                     });
                 }
             }
