@@ -22,6 +22,6 @@ const Strings = {
     ProjectName: "Script Manager",
     ProjectDescription: "Runs files/items against the REST API.",
     SourceUrl: ContextInfo.webServerRelativeUrl,
-    Version: "0.1"
+    Version: "0.6"
 };
 export default Strings;
