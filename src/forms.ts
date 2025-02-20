@@ -263,7 +263,7 @@ export class Forms {
                         type: Components.ButtonTypes.OutlineSuccess,
                         onClick: () => {
                             // Export the CSV
-                            new ExportCSV(item.Title + "_results.csv", ["Error", "Message", "Output"], this._items);
+                            new ExportCSV(item.Title + "_results.csv", ["Error", "Message", "Output"], this._results);
                         }
                     }
                 },
@@ -350,8 +350,8 @@ export class Forms {
                         // Append the result
                         this._results.push(result);
 
-                        // Refresh the table
-                        this._table.refresh(this._results);
+                        // Add the row to the table
+                        this._table.datatable.row.add([result.Error, result.Message, result.Output]).draw(false);
 
                         // Update the header
                         if (rows.length == this._results.length) {
