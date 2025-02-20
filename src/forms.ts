@@ -351,7 +351,7 @@ export class Forms {
                         this._results.push(result);
 
                         // Add the row to the table
-                        this._table.datatable.row.add([result.Error, result.Message, result.Output]).draw(false);
+                        this._table.addRow(result);
 
                         // Update the header
                         if (rows.length == this._results.length) {
