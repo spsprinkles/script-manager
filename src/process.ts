@@ -95,8 +95,41 @@ export class ProcessScript {
                 });
 
                 // Get the row data
-                let data = row.split(',');
-                for (let i = 0; i < data.length; i++) { data[i] = data[i].trim().replace(/(^")|("$)/g, ''); }
+                let data = [];
+                let currentValue = "";
+                let insideQuote = false;
+                for (let i = 0; i < row.length; i++) {
+                    let appendFl = false;
+
+                    if (row[i] === '"') {
+                        // See if this is the start
+                        if (!insideQuote) {
+                            // Set the flag and continue
+                            insideQuote = true;
+                            continue;
+                        } else {
+                            // Set the flag
+                            appendFl = true;
+                        }
+                    } else if (row[i] === ',') {
+                        // See if we are not inside a quote
+                        if (!insideQuote) {
+                            // Set the flag
+                            appendFl = true;
+                        }
+                    }
+
+                    // See if we are appending the value
+                    if (appendFl) {
+                        // Append the current value, reset the value/flag and continue
+                        data.push(currentValue.trim());
+                        currentValue = "";
+                        insideQuote = false;
+                    } else {
+                        // Append the value
+                        currentValue += row[i];
+                    }
+                }
 
                 // Process based on the type
                 switch (this._item.ScriptType) {
