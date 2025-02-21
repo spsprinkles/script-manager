@@ -5,13 +5,15 @@ export class ExportCSV {
     private _columns: string[] = null;
     private _filename: string = null;
     private _rows: any[] = null;
+    private _templateColumns: object = null;
 
     // Constructor
-    constructor(filename: string, columns: string[], rows: any[]) {
+    constructor(filename: string, templateColumns: object, columns: string[], rows: any[]) {
         // Save the properties
         this._columns = columns;
         this._rows = rows;
         this._filename = filename;
+        this._templateColumns = templateColumns;
 
         // Create CSV
         this.generateCSV();
@@ -33,8 +35,12 @@ export class ExportCSV {
             for (let i = 0; i < this._columns.length; i++) {
                 let col = this._columns[i];
 
+                // Set the value
+                let value = data["SourceRow"][this._templateColumns[col.replace(/ /g, '')]] || data[col];
+                value = value == null ? "" : value;
+
                 // Add the column value
-                row.push(data[col] || "");
+                row.push(value);
             }
 
             // Add the row to the csv

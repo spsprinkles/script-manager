@@ -6,6 +6,7 @@ import { xSquare } from "gd-sprest-bs/build/icons/svgs/xSquare";
 import { DataSource, IListItem } from "./ds";
 import { ExportCSV } from "./exportCSV";
 import { ProcessScript, IProcessResult } from "./process";
+import { Templates } from "./templates";
 
 export class Forms {
     // Create form
@@ -262,8 +263,33 @@ export class Forms {
                         text: "Export",
                         type: Components.ButtonTypes.OutlineSuccess,
                         onClick: () => {
+                            let headers = null;
+                            let templateColumns = null;
+                            switch (item.ScriptType) {
+                                case "File":
+                                    headers = Templates.FileHeaders.split(',');
+                                    templateColumns = Templates.FileColumns;
+                                    break;
+                                case "File Item":
+                                    headers = Templates.ItemHeaders.split(',');
+                                    templateColumns = Templates.ItemColumns;
+                                    break;
+                                case "Item":
+                                    headers = Templates.ItemHeaders.split(',');
+                                    templateColumns = Templates.ItemColumns;
+                                    break;
+                                case "List":
+                                    headers = Templates.ListHeaders.split(',');
+                                    templateColumns = Templates.ListColumns;
+                                    break;
+                                case "Site":
+                                    headers = Templates.SiteHeaders.split(',');
+                                    templateColumns = Templates.SiteColumns;
+                                    break;
+                            }
+
                             // Export the CSV
-                            new ExportCSV(item.Title + "_results.csv", ["Error", "Message", "Output"], this._results);
+                            new ExportCSV(item.Title + "_results.csv", templateColumns, headers.concat(["Error", "Message", "Output"]), this._results);
                         }
                     }
                 },

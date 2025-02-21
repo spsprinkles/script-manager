@@ -3,6 +3,7 @@ import { IListItem } from "./ds";
 import { Templates } from "./templates";
 
 export interface IProcessResult {
+    SourceRow: object;
     Error: boolean;
     Message?: string;
     Output?: string;
@@ -35,7 +36,7 @@ export class ProcessScript {
     }
 
     // Method to execute the graph request
-    private execute(obj, method: string, params: string): PromiseLike<IProcessResult> {
+    private execute(srcRow, obj, method: string, params: string): PromiseLike<IProcessResult> {
         // Return a promise
         return new Promise(resolve => {
             // Try to convert the parameters
@@ -50,6 +51,7 @@ export class ProcessScript {
             if (method && obj[method] == null) {
                 // Resolve the request
                 resolve({
+                    SourceRow: srcRow,
                     Error: true,
                     Message: "Error: The method does not exist for this object type.",
                     Output: "Unable to process request."
@@ -59,6 +61,7 @@ export class ProcessScript {
                 (method ? obj[method](...args) : obj).execute(resp => {
                     // Resolve the request
                     resolve({
+                        SourceRow: srcRow,
                         Error: false,
                         Message: "Method was executed successfully.",
                         Output: resp?.response
@@ -66,6 +69,7 @@ export class ProcessScript {
                 }, err => {
                     // Resolve the request
                     resolve({
+                        SourceRow: srcRow,
                         Error: true,
                         Message: "Error executing the method.",
                         Output: err?.response
@@ -78,7 +82,6 @@ export class ProcessScript {
     // Processes the rows
     private process() {
         // Process the rows
-        let counter = 0;
         Helper.Executor(this._rows, row => {
             // Return a promise
             return new Promise(resolve => {
@@ -130,14 +133,15 @@ export class ProcessScript {
                 // See if we are applying it to the item
                 if (itemFl) {
                     // Execute the method
-                    this.execute(file.listItem(), row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+                    this.execute(row, file.listItem(), row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
                 } else {
                     // Execute the method
-                    this.execute(file, row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
+                    this.execute(row, file, row[Templates.FileColumns.Method] || this._item.Method, row[Templates.FileColumns.Parameters] || this._item.Parameters).then(resolve);
                 }
             }, err => {
                 // Resolve the request
                 resolve({
+                    SourceRow: row,
                     Error: true,
                     Message: "Error getting the file.",
                     Output: err?.response || err
@@ -159,10 +163,11 @@ export class ProcessScript {
 
                 // Try to execute the method
                 try {
-                    this.execute(item, row[Templates.ItemColumns.Method] || this._item.Method, row[Templates.ItemColumns.Parameters] || this._item.Parameters).then(resolve);
+                    this.execute(row, item, row[Templates.ItemColumns.Method] || this._item.Method, row[Templates.ItemColumns.Parameters] || this._item.Parameters).then(resolve);
                 } catch {
                     // Resolve the request
                     resolve({
+                        SourceRow: row,
                         Error: true,
                         Message: "Error executing the method.",
                         Output: "The parameters are not in the correct format for this method."
@@ -171,6 +176,7 @@ export class ProcessScript {
             }, err => {
                 // Resolve the request
                 resolve({
+                    SourceRow: row,
                     Error: true,
                     Message: "Error getting the file.",
                     Output: err.response || err
@@ -204,6 +210,7 @@ export class ProcessScript {
                     list.execute(resp => {
                         // Resolve the request
                         resolve({
+                            SourceRow: row,
                             Error: false,
                             Message: "The list has been cleared.",
                             Output: resp["response"]
@@ -250,10 +257,11 @@ export class ProcessScript {
                     }
                     */
                     // Execute the method
-                    this.execute(list, method, row[Templates.ListColumns.Parameters] || this._item.Parameters).then(resolve);
+                    this.execute(row, list, method, row[Templates.ListColumns.Parameters] || this._item.Parameters).then(resolve);
                 }, err => {
                     // Resolve the request
                     resolve({
+                        SourceRow: row,
                         Error: true,
                         Message: "Error getting the list.",
                         Output: err.response || err
@@ -270,7 +278,7 @@ export class ProcessScript {
             // Get the list
             v2.sites.getSite(row[Templates.SiteColumns.SiteUrl]).then(site => {
                 // Execute the method
-                this.execute(site, row[Templates.SiteColumns.Method] || this._item.Method, row[Templates.SiteColumns.Parameters] || this._item.Parameters).then(resolve);
+                this.execute(row, site, row[Templates.SiteColumns.Method] || this._item.Method, row[Templates.SiteColumns.Parameters] || this._item.Parameters).then(resolve);
             });
         });
     }

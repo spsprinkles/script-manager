@@ -1,6 +1,6 @@
 export class Templates {
     // File
-    private static File = `Site Url,List Name,File Url,Method,Parameters`;
+    static FileHeaders = `Site Url,List Name,File Url,Method,Parameters`;
     static FileColumns = {
         SiteUrl: 0,
         ListName: 1,
@@ -10,7 +10,7 @@ export class Templates {
     }
 
     // Item
-    private static Item = `Site Url,List Name,Item ID,Method,Parameters`;
+    static ItemHeaders = `Site Url,List Name,Item ID,Method,Parameters`;
     static ItemColumns = {
         SiteUrl: 0,
         ListName: 1,
@@ -20,7 +20,7 @@ export class Templates {
     }
 
     // List
-    private static List = `Site Url,List ID,List Name,Method,Parameters`;
+    static ListHeaders = `Site Url,List ID,List Name,Method,Parameters`;
     static ListColumns = {
         SiteUrl: 0,
         ListId: 1,
@@ -30,7 +30,7 @@ export class Templates {
     }
 
     // Site
-    private static Site = `Site Url,Method,Parameters`;
+    static SiteHeaders = `Site Url,Method,Parameters`;
     static SiteColumns = {
         SiteUrl: 0,
         Method: 1,
@@ -45,19 +45,19 @@ export class Templates {
         switch (templateType) {
             case "file":
                 filename = title + "_file.csv";
-                template = this.File;
+                template = this.FileHeaders;
                 break;
             case "item":
                 filename = title + "_item.csv";
-                template = this.Item;
+                template = this.ItemHeaders;
                 break;
             case "list":
                 filename = title + "_list.csv";
-                template = this.List;
+                template = this.ListHeaders;
                 break;
             case "site":
                 filename = title + "_site.csv";
-                template = this.Site;
+                template = this.SiteHeaders;
                 break;
             // Invalid
             default:
