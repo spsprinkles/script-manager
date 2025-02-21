@@ -96,7 +96,7 @@ export class ProcessScript {
 
                 // Get the row data
                 let data = row.split(',');
-                for (let i = 0; i < data.length; i++) { data[i] = data[i].trim(); }
+                for (let i = 0; i < data.length; i++) { data[i] = data[i].trim().replace(/(^")|("$)/g, ''); }
 
                 // Process based on the type
                 switch (this._item.ScriptType) {
